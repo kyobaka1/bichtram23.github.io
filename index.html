@@ -266,10 +266,87 @@ header a.right-zone{right:0;width:30%;}
   font-size:.85rem;
   cursor:pointer;
 }
+/* Overlay */
+#love-gate {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity .4s ease;
+}
+
+#love-gate.gate-hide { opacity: 0; pointer-events: none; }
+
+.gate-card {
+  width: min(90vw, 360px);
+  background: #fff;
+  padding: 24px 28px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0,0,0,.35);
+  animation: pop .45s cubic-bezier(.18,.89,.32,1.28);
+}
+
+.gate-card h2 { margin: 0 0 12px; font-size: 22px; }
+.gate-card p { margin: 0 0 12px; }
+.gate-card input[type="date"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px; /* tránh iOS zoom */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.gate-card button {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #ff6b81;
+  color: #fff;
+  font-weight: 600;
+  transition: transform .1s;
+}
+.gate-card button:active { transform: scale(.97); }
+.error-msg { color: #e03131; min-height: 20px; margin-top: 8px; font-size: 14px; }
+
+@keyframes pop {
+  from { transform: scale(.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Trợ năng ẩn label */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  border: 0;
+}
 
 
 </style>
 <body>
+  <!-- Gate Overlay -->
+  <div id="love-gate" class="gate-show">
+    <div class="gate-card">
+      <h2>Muốn vào xem hả bae? 😏</h2>
+      <p>Chọn đúng <strong>ngày mình gặp anh</strong> nhé!</p>
+
+      <label for="love-date" class="sr-only">Ngày đó là</label>
+      <input id="love-date" type="date" />
+
+      <button id="love-submit">Mở cửa</button>
+      <p id="love-error" class="error-msg" aria-live="polite"></p>
+    </div>
+  </div>
+
   <audio id="bgm" src="images/music.mp3" preload="auto" loop></audio>
   <div class="wrapper">
     <div class="top-cover">
@@ -702,6 +779,91 @@ if(items.length > SHOW_FIRST){
           <img src="images/bichtram-gif.gif" alt="header" id="headerImg" />
       </div>
       </section>
+      <style type="text/css">
+        #love-letter {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  line-height: 1.6;
+  font-size: 16px;
+  font-weight: inherit;
+
+}
+
+.type-on-scroll {
+  min-height: 1.5em;            /* để ban đầu không bị nhảy layout */
+  white-space: pre-wrap;         /* giữ xuống dòng nếu có */
+  margin: 24px 0;
+  opacity: 0;                    /* ẩn trước khi gõ */
+  transition: opacity .2s;
+}
+
+.type-on-scroll.typing,
+.type-on-scroll.typed {
+  opacity: 1;
+}
+.type-on-scroll {
+  opacity: 0;
+  min-height: 1.5em;
+  white-space: pre-wrap;
+  transition: opacity .2s;
+  position: relative; 
+}
+
+.typing, .typed { opacity: 1; }
+
+.old-paper {
+  position: relative;
+  z-index: 0;
+  padding: 48px 24px;
+  background: #fdf9f0;              /* màu nền kem nhạt */
+  box-shadow: 0 0 1px rgba(0,0,0,.2);
+  filter: sepia(.12) contrast(1.02);
+  background-image: url("images/background-message.png") ;
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat
+}
+
+/* lớp giấy nhăn/texture */
+.old-paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .25;
+  mix-blend-mode: multiply;          /* trộn màu với nền */
+}
+
+/* vệt vàng nhạt ở rìa */
+.old-paper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 120%, rgba(0,0,0,.1) 0%, rgba(0,0,0,0) 70%) ,
+              radial-gradient(circle at 0% 0%,     rgba(255,210,120,.25) 0%, rgba(0,0,0,0) 55%) ,
+              radial-gradient(circle at 100% 0%,   rgba(255,210,120,.25) 0%, rgba(0,0,0,0) 55%);
+  opacity: .6;
+  mix-blend-mode: multiply;
+  filter: blur(1px);
+}
+
+      </style>
+      <h2 class="ls-title">message to Bích Trâm</h2>
+      <section id="love-letter" class="old-paper">
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 5px;">
+        <p class="type-on-scroll" data-text="Em yêu, vài dòng chữ trong thiệp giấy không thể truyền tải những nội dung anh muốn gửi cho em. Vì tình yêu ❤ trong đó nặng hàng Gigabyte dữ liệu..."></p>
+        <p class="type-on-scroll" data-text="Cảm ơn em đã đến bên anh và yêu anh!"></p>
+        <p class="type-on-scroll" data-text="Anh đã nghĩ làm sao để em có 1 ngày sinh nhật đầu tiên bên anh đủ WOW với sự lãng mạng và bất ngờ. Thật sự là khó vì anh trước đây chưa từng làm, chưa từng trải nghiệm."></p>
+        <p class="type-on-scroll" data-text="Xong anh lại nghĩ lại câu nói em hay nói giỡn với anh, 2 đứa mình dùng toàn bộ chuyên môn học được để yêu đương. Nên nó đó, đây là kết quả!"></p>
+        <p class="type-on-scroll" data-text="Anh chúc em sinh nhật vui vẻ & hạnh phúc bên anh! Tuổi 23 bên anh sẽ có thêm càng nhiều trải nghiệm, càng được yêu thương và chiều chuộng, càng trưởng thành và xinh xắn khoẻ mạnh."></p>
+        <p class="type-on-scroll" data-text="Bích Trâm, anh yêu em rất rất nhiều.... nhiều vcl. Ngọc Vương."></p>
+        </div>
+  
+</section>
 
    
 
@@ -782,5 +944,93 @@ if(items.length > SHOW_FIRST){
       
 
 </script>
+<script>
+  (() => {
+    // Đổi theo format bạn muốn, giữ ISO để dễ so sánh
+    const CORRECT_DATE = "2025-05-19";
+
+    const gateEl   = document.getElementById("love-gate");
+    const inputEl  = document.getElementById("love-date");
+    const btnEl    = document.getElementById("love-submit");
+    const errEl    = document.getElementById("love-error");
+
+    // Optional: khóa scroll khi gate hiện
+    document.body.style.overflow = 'hidden';
+
+    btnEl.addEventListener("click", () => {
+      const val = inputEl.value; // yyyy-mm-dd
+      if (!val) {
+        errEl.textContent = "Chưa chọn ngày nè!";
+        return;
+      }
+      if (val === CORRECT_DATE) {
+        // Mở khóa
+        gateEl.classList.add("gate-hide");
+        setTimeout(() => {
+          gateEl.style.display = "none";
+          document.body.style.overflow = ''; // trả scroll
+        }, 400);
+
+        // Lưu localStorage để lần sau khỏi hỏi nữa
+        localStorage.setItem("love_gate_passed", "1");
+      } else {
+        errEl.textContent = "Sai rồi nha, thử nhớ lại xem! 🙃";
+        // Clear sau 2s cho nhẹ
+        setTimeout(() => errEl.textContent = "", 2000);
+      }
+    });
+
+    // Nếu đã vượt qua trước đó
+    if (localStorage.getItem("love_gate_passed") === "1") {
+      gateEl.style.display = "none";
+      document.body.style.overflow = '';
+    }
+  })();
+</script>
+
+<script>
+(() => {
+  const SPEED = 35; // ms / ký tự
+  const paras = [...document.querySelectorAll('.type-on-scroll')];
+
+  // Bắt đầu khi section vào viewport (hoặc gọi thẳng typeAll() nếu muốn auto ngay)
+  const io = new IntersectionObserver((entries) => {
+    if (entries.some(e => e.isIntersecting)) {
+      io.disconnect();
+      typeAllSequentially(paras);
+    }
+  }, { threshold: 0.2 });
+  io.observe(document.getElementById('love-letter')); // id của section thư
+
+  async function typeAllSequentially(list) {
+    for (const el of list) {
+      if (el.classList.contains('typed')) continue; // đã gõ rồi thì bỏ
+      await typeOne(el);
+    }
+  }
+
+  function typeOne(el) {
+    return new Promise(resolve => {
+      const text = el.getAttribute('data-text') || '';
+      let i = 0;
+      el.classList.add('typing');
+      el.textContent = '';
+
+      const timer = setInterval(() => {
+        el.textContent += text.charAt(i++);
+        if (i >= text.length) {
+          clearInterval(timer);
+          el.classList.remove('typing');
+          el.classList.add('typed');
+          resolve();
+        }
+      }, SPEED);
+    });
+  }
+})();
+</script>
+
+
+
 </body>
 </html>
